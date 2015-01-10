@@ -1,0 +1,2 @@
+fabric.Image.fromURL(imgData, callbackFunc , { crossOrigin: 'anonymous' });
+

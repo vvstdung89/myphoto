@@ -1,0 +1,33 @@
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: #f2f2f4;
+  color: #555;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 700px;
+  margin: auto;
+}
+
+#header {
+  background: #222;
+  padding: 30px;
+  min-width: 700px;
+  position: relative;
+}
+
+#content {
+  margin: 20px 0 40px;
+}
+
+.image-container {
+  display: inline-block;
+  background: white;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #e2e2e2;
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
