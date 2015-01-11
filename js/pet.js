@@ -8,6 +8,54 @@
  *
  */
 
+// Dung Code
+
+//store image handler before adding
+window.onunload = function () { console.log('lets unload windows');}
+
+var image_handle;
+document.getElementById('img_local').value = "";
+document.getElementById('img_local').onchange = function handleImage(e) {
+	image_handle = e.target.files[0];
+}
+
+var image_server="";
+document.getElementById('image_server').innerHTML = '<option src="" value="1">None</option>';
+jQuery.ajax( { 
+	  url: 'http://localhost:8088/image', 
+	  type: 'GET', 
+	  success: function(data) {
+	    var html = '<option src="" value="1">None</option>';
+	    var files = data.split(",");
+	    for (var i = 0; i < files.length;i++){
+	    	if (files[i]!=""){
+	    		var file = files[i].substr(1,files[i].length - 2);
+	    		console.log(file);
+	    		html = html + '<option src="data/' + file + '" value="'+file+'">'+file+'</option> '
+	    	}
+	    } 
+	    document.getElementById('image_server').innerHTML = html;
+
+	  }
+});
+
+document.getElementById('image_server').onchange = function viewSample(){
+	var url = document.getElementById('image_server').value;
+	console.log(url);
+	document.getElementById('sample_image').src="data/"+url;
+	if (url!="1") {
+		document.getElementById('sample_image').style="";
+		image_server = "data/"+url;
+	}
+	else {
+		document.getElementById('sample_image').style="display:none";
+	}
+};
+
+
+//
+
+
 var MESSAGES = [
 	'Fabric library is missing.',
 	'Are you sure?',
@@ -40,7 +88,7 @@ PetUtil = function()
 	
 	that.getImage = function(image)
 	{
-		return './images/batcat.png'
+		return image;
 	};
 	
 	that.hideLoader = function()
@@ -94,6 +142,7 @@ Pet = function()
 	var _canvasBackgroundPicker = $('#canvas-background-picker');
 	var _fontFamily = $('#font-family');
 	var _imageUrl = $('#image_url');
+	var _imageLocal = $('#img_local');
 	var _text = $('#text');
 	var _originX = $('.origin-x');
 	var _originY = $('.origin-y');
@@ -325,22 +374,57 @@ Pet = function()
 			if( $(element).hasClass(_addImageBtn) )
 			{
 				var imageUrl = _imageUrl.val();
+
+				//browse local file
+				var imageLocal = _imageLocal.val();
+				if (imageLocal != ''){
+					var reader = new FileReader();
+					reader.onload = function (event){
+					var imgObj = new Image();
+					imgObj.src = event.target.result;
+					imgObj.onload = function () {
+						var image = new fabric.Image(imgObj);
+						image.set({ left:left , top:top , angle:angle , cornersize:10 });
+						image.scale(scale).setCoords();
+						_canvas.add(image);
+						_canvas.renderAll();
+					}
+					}
+					reader.readAsDataURL(image_handle);
+					_imageLocal.val('') ;
+				}
 				
-				if(imageUrl != '')
+
+				if(imageUrl != '' || image_server != '')
 				{
-					imageUrl = petUtil.getImage(imageUrl);
+					console.log('read url');
+					
+					if (image_server != '')
+						imageUrl = petUtil.getImage(image_server);
+					else 
+						imageUrl = petUtil.getImage(imageUrl);
+
+					console.log("read");
+
+		
 					fabric.Image.fromURL(imageUrl , function(image)
 					{
 						image.set({ left:left , top:top , angle:angle , cornersize:10 });
 						image.scale(scale).setCoords();
 						_canvas.add(image);
+						_canvas.renderAll();
 					});
+
+
+
 					_canvas.deactivateAll();
 					_imageWrapper.hide();
 					_textWrapper.hide();
 				}
 				
 				_imageUrl.val('').focus();
+			} else {
+				console.log('read no thing');
 			}
 			
 			if( $(element).hasClass(_addTextBtn) )
@@ -842,22 +926,22 @@ Pet = function()
 			_applyFilterValue(3, 'brightness', parseInt(this.attr('value'), 10));
 		});
 
-		_tint_filter.on(_event, function() {
-			_applyFilter(4, this.checked && new _filters.Tint({
-				color: _tint_color_filter.attr('value'),
-				opacity: parseFloat(_tint_opacity_filter.attr('value'))
-			}));
-		});
+		// _tint_filter.on(_event, function() {
+		// 	_applyFilter(4, this.checked && new _filters.Tint({
+		// 		color: _tint_color_filter.attr('value'),
+		// 		opacity: parseFloat(_tint_opacity_filter.attr('value'))
+		// 	}));
+		// });
 
-		_tint_opacity_filter(_change, function(){
-			_applyFilterValue(4, 'opacity', parseFloat(this.attr('value')));
+		// _tint_opacity_filter(_change, function(){
+		// 	_applyFilterValue(4, 'opacity', parseFloat(this.attr('value')));
 
-		});
+		// });
 
-		_tint_color_filter(_change, function(){
-			_applyFilterValue(4, 'color', this.attr('value'));
+		// _tint_color_filter(_change, function(){
+		// 	_applyFilterValue(4, 'color', this.attr('value'));
 
-		});		
+		// });		
 
 
 		_customfilters_select.change(function()

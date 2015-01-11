@@ -95,9 +95,20 @@
               <strong>Add image</strong>
             </p>
             <p class="image_url_p">
+              <input type="file" id="img_local"/>
+              <br/>
+              <i>Browse local file. Or</i>
+
               <input type="text" id="image_url" class="last" placeholder="Enter image url" />
               <br/>
-              <i>Paste an http url here.</i>
+              <i>Paste an http url. Or</i>
+              <select id="image_server"></select>
+              <br>
+              <img id="sample_image" src="" width="120" height= "120" style="display:none" ><img>
+              <br/>
+              <i>Donwload from server. Then,, click Add Image</i>
+              
+
               <button class="btn add_image_btn" type="button">Add Image</button>
             </p>
             <br/>
@@ -355,7 +366,7 @@
       </div>
     </div>
 
-    <form id="downloadFileForm" method="POST" action="upload.php">
+    <form id="downloadFileForm" method="POST" action="http://localhost:8088/upload.php">
       <input type="hidden" id="file_data" name="file_data" />
       <input type="hidden" id="file_type" name="file_type" />
     </form>
